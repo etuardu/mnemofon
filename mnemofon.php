@@ -1,6 +1,6 @@
 <?php
 
-  $number = $_GET['n'];
+  $number = trim($_GET['n']);
 
   if (!is_int($number)) {
     $resp = array(
@@ -40,7 +40,7 @@
 
   $f = fopen("diz", "r");
   $words = [];
-  while ($l = fgets($f)) {
+  while ($l = trim(fgets($f))) {
     if (preg_match($pat, $l)) {
       $words[] = $l;
     }
