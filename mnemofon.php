@@ -2,7 +2,7 @@
 
   $number = trim($_GET['n']);
 
-  if (!is_int($number)) {
+  if (!ctype_digit($number)) {
     $resp = array(
       "err" => 1,
       "errtxt" => "Not a valid integer"
