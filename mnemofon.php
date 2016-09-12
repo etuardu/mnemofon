@@ -31,13 +31,19 @@
   $pat = num2pattern($number);
 
   $f = fopen("diz", "r");
-  $words = Array();
+  $words = [];
   while ($l = fgets($f)) {
     if (preg_match($pat, $l)) {
       $words[] = $l;
     }
   }
   fclose($f);
-  echo json_encode($words, JSON_PRETTY_PRINT);
+
+  $resp = array(
+    "err" => 0,
+    "words" => $words
+  );
+
+  echo json_encode($resp, JSON_PRETTY_PRINT);
 
 ?>
