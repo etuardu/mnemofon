@@ -1,0 +1,43 @@
+<?php
+
+  $number = $_GET['n'];
+
+  function num2pattern($num) {
+    $VOW = "[aàeèéiìoòuù]*";
+    $RULE = array(
+      0 => "(z+|s+(?!c)|sc[ie])",
+      1 => "[td]+",
+      2 => "g?n+",
+      3 => "m+",
+      4 => "r+",
+      5 => "g?l+",
+      6 => "[cg]+[ie]",
+      7 => "(g+(?![ien])|c+(?![ie]))",
+      8 => "[fv]+",
+      9 => "[pb]+"
+    );
+
+    // ---
+
+    $pat = "#^$VOW";
+    foreach (str_split($num) as $n) {
+      $pat .= $RULE[$n] . $VOW;
+    }
+    $pat .= "$#";
+
+    return $pat;
+  }
+
+  $pat = num2pattern($number);
+
+  $f = fopen("diz", "r");
+  $words = Array();
+  while ($l = fgets($f)) {
+    if (preg_match($pat, $l)) {
+      $words[] = $l;
+    }
+  }
+  fclose($f);
+  echo json_encode($words, JSON_PRETTY_PRINT);
+
+?>
