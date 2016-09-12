@@ -2,6 +2,14 @@
 
   $number = $_GET['n'];
 
+  if (!is_int($number)) {
+    $resp = array(
+      "err" => 1,
+      "errtxt" => "Not a valid integer"
+    );
+    die(json_encode($resp));
+  };
+
   function num2pattern($num) {
     $VOW = "[aàeèéiìoòuù]*";
     $RULE = array(
