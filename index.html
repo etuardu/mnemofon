@@ -1,0 +1,98 @@
+<html>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<style type="text/css">
+  #dv_number_box {
+    background-color: green;
+    padding: 10px;
+    position: absolute;
+    height: 30px;
+    left: 5px;
+    right: 5px;
+  }
+
+  #txt_number {
+    font-size: 20px;
+    width: 100%;
+    height: 100%;
+  }
+
+  #tbl_words {
+    background-color: #c0c0c0;
+    height: 100%;
+  }
+
+  #tbl_words td {
+    vertical-align: top;
+  }
+
+  #dv_tbl_words {
+    position: absolute;
+    top: 70px;
+    bottom: 15px;
+  }
+
+  .dv_wordlist {
+    overflow-y: scroll;
+    height: 100%;
+    padding: 0px 10px 0px 10px;
+  }
+
+</style>
+<div id="dv_number_box">
+  <input type="text" id="txt_number"/>
+</div>
+<div id="dv_tbl_words">
+<table id="tbl_words">
+  <tr>
+    <td><div class="dv_wordlist"></div></td>
+  </tr>
+</table>
+</div>
+<script>
+  var n = ''; // content of the txt_number
+  var chunks = []; // the number, splitted
+
+  $('#txt_number').on('input', function() {
+
+    // return if the text is unchanged
+    var t = $('#txt_number').val();
+    if (t == n) return;
+    n = t;
+
+    var t_chunks = n.split(' ').filter(function(x) {return x!=''});
+
+    var td_count = $('#tbl_words td').length;
+
+    if (td_count > t_chunks.length) {
+      // remove exceeding tds
+      $('#tbl_words td:gt('+(t_chunks.length-1)+')').remove();
+    }
+    if (td_count < t_chunks.length) {
+      // add needed tds
+      for (var i=td_count; i<t_chunks.length; i++) {
+        $('#tbl_words tr').append('<td><div class="dv_wordlist"></div></td>');
+      }
+    }
+
+    var divs = $('#tbl_words div.dv_wordlist');
+    for (var i=0; i<t_chunks.length; i++) {
+      if (t_chunks[i] == '') continue;
+      if (t_chunks[i] == chunks[i]) continue;
+      $(divs[i]).text('...');
+      $.ajax({
+        url:"mnemofon.php?n="+t_chunks[i],
+        context: $(divs[i]),
+        dataType: 'json'
+      }).done(function(data) {
+        $(this).html(data.words.join('<br>'));
+      });
+    }
+
+    chunks = t_chunks;
+
+  });
+</script>
+</html>
