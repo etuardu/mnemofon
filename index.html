@@ -42,7 +42,7 @@
 
 </style>
 <div id="dv_number_box">
-  <input type="text" id="txt_number"/>
+  <input type="text" id="txt_number" autofocus/>
 </div>
 <div id="dv_tbl_words">
 <table id="tbl_words">
@@ -52,8 +52,9 @@
 </table>
 </div>
 <script>
-  var n = ''; // content of the txt_number
-  var chunks = []; // the number, splitted
+  var n = ''; // value of the txt_number field
+  var chunks = []; // the number, splitted by spaces
+  var ajaxTimers = []; // for delayied calls
 
   $('#txt_number').on('input', function() {
 
@@ -62,8 +63,10 @@
     if (t == n) return;
     n = t;
 
-    var t_chunks = n.split(' ').filter(function(x) {return x!=''});
+    // skim out empty items (due to multiple/trailing spaces)
+    var t_chunks = n.split(' ').filter(function(x) {return x != ''});
 
+    // amount of tds in the table
     var td_count = $('#tbl_words td').length;
 
     if (td_count > t_chunks.length) {
@@ -77,18 +80,40 @@
       }
     }
 
+    // divs where to put the word lists
     var divs = $('#tbl_words div.dv_wordlist');
+
     for (var i=0; i<t_chunks.length; i++) {
-      if (t_chunks[i] == '') continue;
       if (t_chunks[i] == chunks[i]) continue;
+
       $(divs[i]).text('...');
-      $.ajax({
-        url:"mnemofon.php?n="+t_chunks[i],
-        context: $(divs[i]),
-        dataType: 'json'
-      }).done(function(data) {
-        $(this).html(data.words.join('<br>'));
-      });
+
+      if (ajaxTimers.length <= i) {
+        // make room to put the timer
+        ajaxTimers.push(null);
+      } else {
+        // clear previously set timer
+        clearTimeout(ajaxTimers[i]);
+      }
+
+      // delayied ajax call to populate the div.
+      // The div (context) and the number (n) are
+      // passed in the timeout by a closure.
+      ajaxTimers[i] = setTimeout(function(context, n) {
+        return function() {
+          $.ajax({
+            url: "mnemofon.php",
+            type: "get",
+            data: {
+              n: n
+            },
+            context: context,
+            dataType: 'json'
+          }).done(function(data) {
+            $(this).html(data.words.join('<br>'));
+          });
+        };
+      }($(divs[i]), t_chunks[i]), 700);
     }
 
     chunks = t_chunks;
