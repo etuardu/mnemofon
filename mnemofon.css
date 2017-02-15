@@ -1,0 +1,36 @@
+#dv_number_box {
+  background-color: #004976;
+  padding: 10px;
+  position: absolute;
+  height: 30px;
+  left: 5px;
+  right: 5px;
+}
+
+#txt_number {
+  font-size: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+#tbl_words {
+  background-color: #aec3d1;
+  height: 100%;
+}
+
+#tbl_words td {
+  vertical-align: top;
+}
+
+#dv_tbl_words {
+  position: absolute;
+  top: 70px;
+  bottom: 15px;
+}
+
+.dv_wordlist {
+  font-family: sans;
+  overflow-y: scroll;
+  height: 100%;
+  padding: 0px 10px 0px 10px;
+}
