@@ -11,7 +11,7 @@ $('#txt_number').on('input', function() {
   if (t == n) return;
   n = t;
 
-  // skim out empty items (due to multiple/trailing spaces)
+  // skim out empty items (due to multiple or trailing spaces)
   var t_chunks = n.split(' ').filter(function(x) {return x != ''});
 
   // amount of tds in the table
@@ -19,8 +19,14 @@ $('#txt_number').on('input', function() {
 
   if (td_count > t_chunks.length) {
     // remove exceeding tds
-    $('#tbl_words td:gt('+(t_chunks.length-1)+')').remove();
+    $('#tbl_words td:gt('+(Math.max(0, t_chunks.length-1))+')').remove();
   }
+
+  if (t_chunks.length == 0) {
+    $('.dv_wordlist:first').text('');
+    return;
+  }
+
   if (td_count < t_chunks.length) {
     // add needed tds
     for (var i=td_count; i<t_chunks.length; i++) {
@@ -37,16 +43,16 @@ $('#txt_number').on('input', function() {
     $(divs[i]).text('...');
 
     if (ajaxTimers.length <= i) {
-      // make room to put the timer
+      // make room in the array to put the timer
       ajaxTimers.push(null);
     } else {
-      // clear previously set timer
+      // clear a previously set timer
       clearTimeout(ajaxTimers[i]);
     }
 
     // delayied ajax call to populate the div.
     // The div (context) and the number (n) are
-    // passed in the timeout by a closure.
+    // passed in the timeout using a closure.
     ajaxTimers[i] = setTimeout(function(context, n) {
       return function() {
         $.ajax({
@@ -58,10 +64,22 @@ $('#txt_number').on('input', function() {
           context: context,
           dataType: 'json'
         }).done(function(data) {
-          $(this).html(data.words.join('<br>'));
+          if (data.err != 0) {
+            // invalid input
+            $(this).html('<i>Caratteri non validi</i>');
+          } else if (data.words.length > 0) {
+            // found
+            $(this).html(data.words.join('<br>'));
+          } else {
+            // nothing found
+            $(this).html('<i>Nessun risultato</i>');
+          }
+        }).fail(function(data) {
+          // ajax error
+          $(this).html('<i>Errore server</i>');
         });
       };
-    }($(divs[i]), t_chunks[i]), 700);
+    }($(divs[i]), t_chunks[i]), 1200);
   }
 
   chunks = t_chunks;
