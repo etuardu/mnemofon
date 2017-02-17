@@ -13,7 +13,7 @@
   function num2pattern($num) {
     $VOW = "[aàeèéiìoòuù]*";
     $RULE = array(
-      0 => "(z+|s+(?!c)|sc[ìieèé])",
+      0 => "(z+(?!z)|s+(?![sc])|sc[ìieèé])",
       1 => "[td]+(?![td])",
       2 => "g?n+(?!n)",
       3 => "m+(?!m)",
