@@ -11,27 +11,40 @@
   };
 
   function num2pattern($num) {
-    $VOW = "[aàeèéiìoòuù]*";
+    $VOW = "[aàeèéiìoòuù]";
     $RULE = array(
-      0 => "(z+(?!z)|s+(?![sc])|sc[ìieèé])",
-      1 => "[td]+(?![td])",
-      2 => "g?n+(?!n)",
-      3 => "m+(?!m)",
-      4 => "r+(?!r)",
-      5 => "(l+(?!l)|(?<=[^n])gl)",
+      0 => "(z+|s+(c[ìieèé])?)",
+      1 => "[td]+",
+      2 => "g?n+",
+      3 => "m+",
+      4 => "r+",
+      5 => "(l+|(?<=[^n])gl)",
       6 => "[cg]+[iìeèé]",
-      7 => "(g+(?![iìeèén])|c+(?![iìeèé]))(?![cg])",
-      8 => "[fv]+(?![fv])",
-      9 => "[pb]+(?![pb])"
+      7 => "(g+(?![iìeèén])|c+(?![iìeèé]))",
+      8 => "[fv]+",
+      9 => "[pb]+"
     );
 
     // ---
 
     $pat = "#^$VOW";
+    $last_n = -1;
     foreach (str_split($num) as $n) {
+      if (($n != $last_n) || ($n == 6)) {
+        // the current consonant is different
+        // from the last put one, or it
+        // already has a trailing vowel (6 = gi|ci)
+        $pat .= "*"; // 0 or more leading vowels
+      } else {
+        // two same consonants in a row,
+        // must be separated by a vowel
+        $pat .= "+"; // 1 or more leading vowels
+      }
       $pat .= $RULE[$n] . $VOW;
+      $last_n = $n;
     }
-    $pat .= "$#";
+    if (substr($pat, strlen($pat)-1, 1) != "*") $pat .= "*";
+    $pat .= "$#u";
 
     return $pat;
   }
@@ -49,7 +62,8 @@
 
   $resp = array(
     "err" => 0,
-    "words" => $words
+    "words" => $words,
+    "regex" => $pat
   );
 
   echo json_encode($resp, JSON_PRETTY_PRINT);
