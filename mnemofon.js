@@ -79,7 +79,7 @@ $('#txt_number').on('input', function() {
           $(this).html('<i>Errore server</i>');
         });
       };
-    }($(divs[i]), t_chunks[i]), 1200);
+    }($(divs[i]), t_chunks[i]), 800);
   }
 
   chunks = t_chunks;
