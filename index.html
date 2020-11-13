@@ -1,19 +1,47 @@
-<html>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="mnemofon.css">
-<script
-  src="https://code.jquery.com/jquery-3.1.1.min.js"
-  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-  crossorigin="anonymous"></script>
-<div id="dv_number_box">
-  <input type="text" id="txt_number" autofocus pattern="[0-9\s]+"/>
-</div>
-<div id="dv_tbl_words">
-<table id="tbl_words">
-  <tr>
-    <td><div class="dv_wordlist"></div></td>
-  </tr>
-</table>
-</div>
-<script src="mnemofon.js"></script>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mnemofon</title>
+  <link rel="stylesheet" href="mnemofon.css">
+  <script src="mnemofon.js"></script>
+</head>
+<body>
+  <div id="info_dialog">
+    <div id="info_dialog__content">
+      <div id="info_box">
+        <strong>Mnemofon</strong>
+        <p>
+        Inserisci una sequenza di numeri per ottenere una lista di possibili
+        parole corrispondenti secondo la
+        <a
+        href="https://it.wikipedia.org/wiki/Conversione_fonetica"
+        target="_blank"
+        >conversione fonetica</a>.
+        <br/>
+        È possibile ottenere più liste inserendo diverse sequenze numeriche separate da spazi.
+        <a href="http://www.sergiochiodo.it/memo/conversionefonetica.htm"></a>
+        </p>
+        <p>
+        Edoardo Nannotti - edonan@gmail.com -
+
+        <a href="https://github.com/etuardu/mnemofon"
+        target="_blank">GitHub</a>
+
+        </p>
+        <button id="btn_close">Chiudi</button>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="number_box">
+      <input type="text" id="txt_number">
+      <button id="btn_about">?</button>
+    </div>
+    <div id="words_table">
+      <div></div>
+    </div>
+  </div>
+</body>
 </html>

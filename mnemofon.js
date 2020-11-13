@@ -1,46 +1,43 @@
-/* mnemofon.js */
+let n = ''; // value of the txt_number field
+let chunks = []; // the number, splitted by spaces
+let ajaxTimers = []; // for delayed calls
 
-var n = ''; // value of the txt_number field
-var chunks = []; // the number, splitted by spaces
-var ajaxTimers = []; // for delayied calls
+function onInput(t) {
 
-$('#txt_number').on('input', function() {
-
-  // return if the text is unchanged
-  var t = $('#txt_number').val();
   if (t == n) return;
+  // return if the text is unchanged
+
   n = t;
 
-  // skim out empty items (due to multiple or trailing spaces)
-  var t_chunks = n.split(' ').filter(function(x) {return x != ''});
+  // split on spaces and skip empty lines
+  const t_chunks = n.split(' ').filter(x => x != '');
 
-  // amount of tds in the table
-  var td_count = $('#tbl_words td').length;
+  let tds = document.querySelectorAll("#words_table div");
 
-  if (td_count > t_chunks.length) {
-    // remove exceeding tds
-    $('#tbl_words td:gt('+(Math.max(0, t_chunks.length-1))+')').remove();
-  }
+  // remove exceeding tds
+  tds.forEach( (e, i) => {
+    if ((i == 0) || (i < t_chunks.length)) return;
+    e.parentNode.removeChild(e);
+  });
 
   if (t_chunks.length == 0) {
-    $('.dv_wordlist:first').text('');
+    tds[0].innerText = '';
     return;
   }
 
-  if (td_count < t_chunks.length) {
-    // add needed tds
-    for (var i=td_count; i<t_chunks.length; i++) {
-      $('#tbl_words tr').append('<td><div class="dv_wordlist"></div></td>');
+  t_chunks.forEach( (e, i) => {
+    // add td if needed
+    if (i >= tds.length) {
+      document.getElementById("words_table").appendChild(
+        document.createElement("div")
+      );
+      tds = document.querySelectorAll("#words_table div");
+      // update array
     }
-  }
 
-  // divs where to put the word lists
-  var divs = $('#tbl_words div.dv_wordlist');
+    if (t_chunks[i] == chunks[i]) return;
 
-  for (var i=0; i<t_chunks.length; i++) {
-    if (t_chunks[i] == chunks[i]) continue;
-
-    $(divs[i]).text('...');
+    tds[i].innerText = "...";
 
     if (ajaxTimers.length <= i) {
       // make room in the array to put the timer
@@ -50,38 +47,54 @@ $('#txt_number').on('input', function() {
       clearTimeout(ajaxTimers[i]);
     }
 
-    // delayied ajax call to populate the div.
-    // The div (context) and the number (n) are
-    // passed in the timeout using a closure.
-    ajaxTimers[i] = setTimeout(function(context, n) {
-      return function() {
-        $.ajax({
-          url: "mnemofon.php",
-          type: "get",
-          data: {
-            n: n
-          },
-          context: context,
-          dataType: 'json'
-        }).done(function(data) {
-          if (data.err != 0) {
-            // invalid input
-            $(this).html('<i>Caratteri non validi</i>');
-          } else if (data.words.length > 0) {
-            // found
-            $(this).html(data.words.join('<br>'));
-          } else {
-            // nothing found
-            $(this).html('<i>Nessun risultato</i>');
-          }
-        }).fail(function(data) {
-          // ajax error
-          $(this).html('<i>Errore server</i>');
-        });
-      };
-    }($(divs[i]), t_chunks[i]), 800);
-  }
+    ajaxTimers[i] = setTimeout(async () => {
+      try {
+        const req = await fetch(
+          `mnemofon.php?n=${t_chunks[i]}`
+        );
+        const data = await req.json();
+        console.log(data);
+        if (data.err != 0) {
+          // invalid input
+          tds[i].innerHTML = '<i>Caratteri non validi</i>';
+        } else if (data.words.length > 0) {
+          // found
+          tds[i].innerHTML = data.words.join('<br>');
+        } else {
+          // nothing found
+          tds[i].innerHTML = '<i>Nessun risultato</i>';
+        }
+      } catch (err){
+        tds[i].innerHTML = '<i>Errore server</i>';
+      }
+    }, 800);
+
+  });
 
   chunks = t_chunks;
 
+}
+
+function toggleInfoDialog(s) {
+  document.getElementById(
+    "info_dialog"
+  ).style.display = s ? "flex" : "none";
+};
+
+window.addEventListener("load", () => {
+  document.getElementById(
+    "btn_close"
+  ).addEventListener("click", () => {
+    toggleInfoDialog(false);
+  });
+  document.getElementById(
+    "btn_about"
+  ).addEventListener("click", () => {
+    toggleInfoDialog(true);
+  });
+  document.getElementById(
+    "txt_number"
+  ).addEventListener("input", e => {
+    onInput(e.target.value);
+  });
 });
