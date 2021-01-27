@@ -40,6 +40,8 @@ button {
 }
 #txt_number {
   font-size: 25px;
+  padding: 0 10px;
+  color: var(--dark-purple);
 }
 #btn_about {
   font-size: 25px;
@@ -50,7 +52,8 @@ button {
   padding: 15px;
   background-color: var(--light-orange);
   color: var(--dark-purple);
-  font-family: sans;
+  line-height: 1.5;
+  font-size: 18px;
 }
 #info_dialog {
   position: absolute;
@@ -65,4 +68,12 @@ button {
 #info_dialog__content {
   background: #fff;
   padding: 20px;
+  border-radius: 10px;
+}
+#info_dialog img {
+  vertical-align: bottom;
+}
+#info_dialog h1 {
+  font-size: 18px;
+  color: var(--purple);
 }
