@@ -66,14 +66,34 @@ button {
   padding: 40px;
 }
 #info_dialog__content {
+  line-height: 1.5;
   background: #fff;
   padding: 20px;
   border-radius: 10px;
 }
-#info_dialog img {
+#info_dialog img.logo {
   vertical-align: bottom;
+  width: 100px;
+}
+#info_dialog img.link {
+  vertical-align: bottom;
+  height: 30px;
+  color: var(--purple);
+  margin: 0 5px;
 }
 #info_dialog h1 {
   font-size: 18px;
   color: var(--purple);
+}
+#info_dialog footer {
+  margin-top: 30px;;
+  display: flex;
+  flex-wrap: wrap;
+}
+#info_dialog hr {
+  border: 1px solid var(--light-purple);
+}
+footer p.author {
+  flex-grow: 1;
+  font-size: 14px;
 }
